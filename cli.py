@@ -18,7 +18,10 @@ def main():
     print("                    AI SEARCH & QA ENGINE                       ")
     print("=" * 70)
     print("Ask any question or search for standards, clauses, or tests.")
+    print("Tip: Prefix with 'audit <product>' for a full compliance & gap checklist.")
     print("Type 'exit' or 'quit' to close.\n")
+
+    auditor = None
 
     while True:
         try:
@@ -28,6 +31,15 @@ def main():
             if query.lower() in ["exit", "quit", "q"]:
                 print("Goodbye!")
                 break
+
+            if query.lower().startswith("audit ") or query.lower().startswith("check "):
+                product_query = query.split(" ", 1)[1].strip()
+                if not auditor:
+                    from compliance_checker import MedicalComplianceAuditor
+                    auditor = MedicalComplianceAuditor(index_path)
+                audit_result = auditor.audit(product_query)
+                print("\n" + auditor.format_markdown(audit_result) + "\n")
+                continue
 
             result = engine.answer_question(query, top_k=3)
 

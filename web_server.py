@@ -14,6 +14,15 @@ CORPUS = json.loads((ROOT / 'corpus_chunks.json').read_text())
 ENGINE = None
 INFLIGHT = threading.BoundedSemaphore(4)
 
+AUDITOR = None
+
+def get_auditor():
+    global AUDITOR
+    if AUDITOR is None:
+        from compliance_checker import MedicalComplianceAuditor
+        AUDITOR = MedicalComplianceAuditor(ROOT / 'corpus_index.pkl')
+    return AUDITOR
+
 class Handler(BaseHTTPRequestHandler):
     def setup(self):
         super().setup()
@@ -58,7 +67,8 @@ class Handler(BaseHTTPRequestHandler):
         self.respond({'error': 'Not found'}, 404)
 
     def do_POST(self):
-        if urlparse(self.path).path != '/api/ask':
+        post_path = urlparse(self.path).path
+        if post_path not in ('/api/ask', '/api/compliance'):
             return self.respond({'error': 'Not found'}, 404)
         try:
             if self.headers.get('Transfer-Encoding'):
@@ -71,6 +81,15 @@ class Handler(BaseHTTPRequestHandler):
             if not isinstance(query, str) or not 2 <= len(query.strip()) <= 1500:
                 return self.respond({'error': 'Please enter a question between 2 and 1,500 characters.'}, 400)
             query = query.strip()
+
+            if post_path == '/api/compliance':
+                origin = payload.get('origin', 'domestic')
+                if origin not in ('domestic', 'foreign'):
+                    origin = 'domestic'
+                auditor = get_auditor()
+                audit_result = auditor.audit(query, origin=origin)
+                return self.respond(audit_result)
+
             language = payload.get('language', 'auto')
             if not isinstance(language, str) or language not in {'auto', *LANGUAGES}:
                 return self.respond({'error': 'Unsupported language.'}, 400)

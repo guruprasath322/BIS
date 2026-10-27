@@ -84,6 +84,15 @@ class WebTests(unittest.TestCase):
                 self.assertIn('en', result['languages'])
                 self.assertEqual(result['knowledge_reviewed_on'], web_server.REVIEWED)
 
+    def test_compliance_endpoint(self):
+        status, result = self.request('/api/compliance', {'query': 'infusion sets with volumetric controllers'})
+        self.assertEqual(status, 200)
+        self.assertIn('committee', result)
+        self.assertEqual(result['committee']['code'], 'MHD 12')
+        self.assertIn('certification_route', result)
+        self.assertIn('compliance_checklist', result)
+        self.assertTrue(len(result['compliance_checklist']) > 0)
+
     def test_error_state(self):
         with patch.object(web_server.ENGINE, 'answer_question', side_effect=RuntimeError):
             self.assertEqual(self.request('/api/ask', {'query': 'surgical tools'})[0], 500)

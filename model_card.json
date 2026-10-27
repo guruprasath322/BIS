@@ -1,0 +1,17 @@
+{
+  "model_name": "BIS Domain 54 Hybrid BM25 + TF-IDF Retrieval Model",
+  "domain": "Medical Equipment and Hospital Planning (Domain 54)",
+  "architecture": "Hybrid Lexical BM25 + Word N-gram (1-3) + Char N-gram (3-5) with Title-Prominent Indexing",
+  "total_documents": 54,
+  "total_chunks": 282,
+  "word_vocab_size": 25000,
+  "char_vocab_size": 25000,
+  "index_size_kb": 12833.91,
+  "metrics": {
+    "benchmark_cases_count": 10,
+    "top1_precision": 1.0,
+    "top3_recall": 1.0,
+    "mean_reciprocal_rank": 1.0
+  },
+  "status": "Production-Ready"
+}

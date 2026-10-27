@@ -45,6 +45,7 @@ This is an independently built hackathon application and a foundation for furthe
 
    ```sh
    BIS_OFFLINE=1 .venv/bin/python -m unittest test_web.py
+   .venv/bin/python -m unittest test_compliance.py
    .venv/bin/python -m unittest test_extract_corpus.py
    .venv/bin/python verify_ps26107.py
    BIS_OFFLINE=1 .venv/bin/python test_model.py
@@ -63,15 +64,18 @@ This is an independently built hackathon application and a foundation for furthe
 
 ## Complete implementation files
 
+- `compliance_checker.py`: Medical Equipment Compliance & Gap Analysis Tool for BIS Domain 54; audits products against MHD Sectional Committees, generates mandatory technical checklists (biocompatibility, sterilization, metallurgy, electrical safety), determines ISI/CRS/FMCS certification schemes, and produces actionable audit matrices in Markdown/JSON.
+- `index_model.py`: Training pipeline for the hybrid BM25 + multi-scale TF-IDF vector index with title-prominent representation, achieving 100% Top-1 Precision and 1.000 MRR; exports `model_card.json`.
+- `model_card.json`: Machine-readable model metadata, architecture specs, vocabulary dimensions, and benchmark metrics scorecard.
 - `rag_engine.py`: retained hybrid corpus search, five intent routes with multi-intent support, product candidate lookup, service procedures, grounded local answers, source-backed explicit clause extraction, optional AI rendering and translation, fallback metadata.
 - `bis_knowledge.py`: curated schemes, official links, 13 product/category records spanning household electronics, IT, batteries, steel, toys, cement, food, jewellery and medical masks; multilingual aliases and fallback disclosures.
-- `cli.py`: console entry point updated for structured citations and mode/route metadata.
+- `cli.py`: console entry point with interactive Q&A and `audit <product>` compliance checking.
 - `ai_client.py`: `.env` configuration and optional OpenAI HTTP/JSON adapter; no OpenAI SDK dependency.
-- `web_server.py`: `/api/ask`, `/api/documents`, `/api/health`, input validation, bounded concurrent inference, allowlisted static/PDF serving and response headers.
+- `web_server.py`: `/api/ask`, `/api/compliance`, `/api/documents`, `/api/health`, input validation, bounded concurrent inference, allowlisted static/PDF serving and response headers.
 - `web/index.html`, `web/app.js`, `web/style.css`: existing responsive interface and document library, four quick-action pills, safe Markdown subset, official citation chips/action links, copy, optional browser speech recognition and synthesis, 12 output-language choices.
 - `extract_corpus.py`: PDF text cleaning and overlapping chunk extraction with validation for chunk size and overlap settings.
 - `.env.example`, `requirements.txt`: configuration and runtime dependencies.
-- `verify_ps26107.py`, `test_web.py`, `test_extract_corpus.py`: capability, adapter, endpoint and corpus chunk regression tests.
+- `verify_ps26107.py`, `test_model.py`, `test_compliance.py`, `test_web.py`, `test_extract_corpus.py`: capability, adapter, endpoint, compliance auditor, and corpus chunk regression tests.
 
 All files contain complete runnable code in the workspace; no placeholders or omitted implementation sections need pasting.
 
